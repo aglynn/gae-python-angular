@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<!-- define angular app -->
+<html ng-app="scotchApp">
+	<head>
+		<!-- SCROLLS -->
+		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" />
+		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.css" />
+		<link rel="stylesheet" href="lab.css" />
+
+		<!-- SPELLS -->
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.10/angular.min.js"></script>
+		<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.10/angular-route.js"></script>
+		<script src="ui-bootstrap-tpls-0.10.0.js"></script>
+		<script src="script.js"></script>
+		<script src="custom.js"></script>
+	</head>
+	<body>
+		<div ng-controller="mainController">
+	  <nav class="navbar navbar-default">
+		<div class="container">
+		  <div class="navbar-header">
+			<a class="navbar-brand" href="/">Anthony Glynn - Lab 8</a>
+		  </div>
+
+		  <ul class="nav navbar-nav navbar-right">
+			<li><a href="#"><i class="fa fa-home"></i> Home</a></li>
+			<li><a href="#about"><i class="fa fa-shield"></i> About</a></li>
+			<li><a href="#contact"><i class="fa fa-comment"></i> Contact</a></li>
+		  </ul>
+		</div>
+	  </nav>
+
+	  <div id="main">
+	  
+		<!-- angular templating -->
+			<!-- this is where content will be injected -->
+		<div ng-view></div>
+		
+	  </div>
+	<!-- apply the module and controller to our body so angular is applied to that -->
+	<div class="container">
+		<div class="col-md-4">		
+			<!-- PAGE TITLE -->
+			<div class="page-header">
+				<h3><span class="glyphicon glyphicon-tower"></span>Type a portfolio title and description bought and click "Submit!" to add it to the database.</h3>
+			</div>
+			<div id="msgarea"></div>
+
+			<form id="addPort">
+			<!-- Ticker: <input type="text" name="ticker" /> <br /> -->
+			<!-- Shares: <input type="text" onChange="ajaxFunction();" name="shares" /> -->
+
+			<label>Portfolio Name</label>
+			<input type="text" name="portname" /> <br />
+			<label>Portfolio Description</label>
+			<input type="text" name="portdesc" /> <br />
+			<!-- <input type="submit" value="Post New Portfolio Name" /> -->
+
+			<button id="addportname">Add Portfolio</button> <br />
+			<button id="getportlist">List Portfolios</button>
+			</form>
+			<div id="msgarea2"></div>
+		</div>
+		<div class="col-md-4">
+			<!-- PAGE TITLE -->
+			<div class="page-header">
+				<h3><span class="glyphicon glyphicon-hdd"></span>Add or Update Stocks for Portfolios</h3>
+				Type a company ticker such as "goog" or "msft" and enter the number of stocks you've bought and click "Submit!" to add it to the database.
+			</div>
+			<form id="addStock">
+			<br />
+			Ticker: <input type="text" name="ticker" /> <br />
+			Shares: <input type="text" name="shares" /> <br />
+			Portfolio Name: <input type="text" name="portname" />
+			<br />
+			<button id="addstock">Add/Update Stocks in a Portfolio</button> <br />
+			<button id="getstklist">List Stocks</button>
+			</form>
+			<div id="stkmsgarea">
+			</div>
+		</div>
+		<div class="col-md-4">
+	<h3><span class="glyphicon glyphicon-globe"></span>Stock API - Extras</h3>
+	<div ng-controller="CollapseDemoCtrl">
+		<button class="btn btn-default" ng-click="isCollapsedGet = !isCollapsedGet">Get current stock price <span id="isCollapsedGetToggle">(click to expand/collapse area)</span></button>
+		<button class="btn btn-default" ng-click="isCollapsedDelete = !isCollapsedDelete">Delete stock from portfolio <span id="isCollapsedDeleteToggle">(click to expand/collapse area)</span></button>
+
+		<hr>
+		<div collapse="isCollapsedDelete">
+			<div ng-app="referenceFormApp" ng-controller="referenceFormController">
+				<div class="well well-lg">
+					<div class="page-header">
+						<h3><span class="glyphicon glyphicon-globe"></span>Type a company ticker and the porfolio name and click "Submit!" to delete that stock from that portfolio.</h3>
+					</div>
+
+					<div class="row">		
+						<div class="col-md-6">
+							<!-- FORM -->
+							<form id="deleteStk">
+								<!-- NAME -->
+								<div id="name-group" class="form-group" ng-class="{ 'has-error' : errorName }">
+									<label>Ticker</label>
+									<input type="text" id="stockNameDel" class="form-control" placeholder="goog" ng-model="formData.name">
+									<label>Portfolio</label>
+									<input type="text" id="stockPortDel" placeholder="Primary"">
+									<span class="help-block" ng-show="errorName">{{ errorName }}</span>
+								</div>
+
+								<!-- SUBMIT BUTTON -->
+								<button id="deletestk" type="submit" class="btn btn-success btn-lg btn-block">
+									<span class="glyphicon glyphicon-flash"></span> Submit!
+								</button>
+								
+								<!-- SHOW DATA FROM INPUTS AS THEY ARE BEING TYPED -->
+								<pre>{{ formData }}</pre>
+
+							</form>
+						</div>
+						<div class="col-md-6">
+							<!-- SHOW ERROR/SUCCESS MESSAGES -->
+							<div id="deleteStkMsg" class="well" ng-show="message"><h1>{{ pricemessage }}</h1></div>
+						</div>
+					</div>
+				</div> 
+			</div>
+		</div>
+		<div collapse="isCollapsedGet">
+			<div ng-app="referenceFormApp" ng-controller="referenceFormController">
+				<div class="well well-lg">
+					<div class="page-header">
+						<h3><span class="glyphicon glyphicon-tower"></span>Type a company ticker such as "goog" or "msft" and click "Submit!" to get stock price.</h3>
+					</div>
+
+					<div class="row">		
+						<div class="col-md-6">
+							<!-- FORM -->
+							<form ng-submit="processForm()">
+								<!-- NAME -->
+								<div id="name-group" class="form-group" ng-class="{ 'has-error' : errorName }">
+									<label>Ticker</label>
+									<input type="text" name="name" class="form-control" placeholder="goog" ng-model="formData.name">
+									<span class="help-block" ng-show="errorName">{{ errorName }}</span>
+								</div>
+
+								<!-- SUBMIT BUTTON -->
+								<button type="submit" class="btn btn-success btn-lg btn-block">
+									<span class="glyphicon glyphicon-flash"></span> Submit!
+								</button>
+								
+								<!-- SHOW DATA FROM INPUTS AS THEY ARE BEING TYPED -->
+								<pre>{{ formData }}</pre>
+
+							</form>
+						</div>
+						<div class="col-md-6">
+							<!-- SHOW ERROR/SUCCESS MESSAGES -->
+							<div id="messages" class="well" ng-show="message"><h1>{{ pricemessage }}</h1></div>
+						</div>
+					</div>
+				</div> 
+			</div>
+		</div>
+	</div>
+	<hr>
+
+	<h3><span class="glyphicon glyphicon-credit-card"></span>Portfolio API - Extras</h3>
+	<div ng-controller="CollapseDemoCtrl1">
+		<button class="btn btn-default" ng-click="isCollapsedPortGetName = !isCollapsedPortGetName">Get portfolio info: desc, stocks, value (click to expand/collapse)</button>
+		<button class="btn btn-default" ng-click="isCollapsedPortDelete = !isCollapsedPortDelete">Delete a portfolio (click to expand/collapse)</button>
+
+		<hr>
+		<div collapse="isCollapsedPortGetName">
+			<div ng-app="referenceFormApp" ng-controller="referenceFormController">
+				<div class="well well-lg">
+					<div class="page-header">
+						<h3><span class="glyphicon glyphicon-align-right"></span>Type a portfolio name and click "Submit!" to get portfolio information, including description, stock quantity, and current overall value.</h3>
+					</div>
+
+					<div class="row">		
+						<div class="col-md-12">
+							<!-- FORM -->
+							<form id="portInfo">
+								<!-- NAME -->
+								<div id="name-group" class="form-group" ng-class="{ 'has-error' : errorName }">
+									<label>Portfolio Name</label>
+									<input type="text" id="portfolioInfoName" name="name" class="form-control" placeholder="IRA" ng-model="formData.name">
+									<span class="help-block" ng-show="errorName">{{ errorName }}</span>
+								</div>
+
+								<!-- SUBMIT BUTTON -->
+								<button id="portInfoBtn" type="submit" class="btn btn-success btn-lg btn-block">
+									<span class="glyphicon glyphicon-flash"></span> Submit!
+								</button>
+								
+								<!-- SHOW DATA FROM INPUTS AS THEY ARE BEING TYPED -->
+								<pre>{{ formData }}</pre>
+
+							</form>
+						</div>
+						<div class="col-md-12">
+							<!-- SHOW ERROR/SUCCESS MESSAGES -->
+							<div id="portInfoMessages" class="well" ng-show="message"><h1>{{ pricemessage }}</h1></div>
+						</div>
+					</div>
+				</div> 
+			</div>
+		</div>
+		<div collapse="isCollapsedPortDelete">
+			<div ng-app="referenceFormApp" ng-controller="referenceFormController">
+				<div class="well well-lg">
+					<div class="page-header">
+						<h3><span class="glyphicon glyphicon-ban-circle"></span>Type a portfolio name and click "Submit!" to delete that portfolio.</h3>
+					</div>
+
+					<div class="row">		
+						<div class="col-md-6">
+							<!-- FORM -->
+							<form id="portfolioDelete">
+								<!-- NAME -->
+								<div id="name-group" class="form-group" ng-class="{ 'has-error' : errorName }">
+									<label>Portfolio Name</label>
+									<input id="portfolioDeleteName" type="text" name="name" class="form-control" placeholder="IRA" ng-model="formData.name">
+									<span class="help-block" ng-show="errorName">{{ errorName }}</span>
+								</div>
+
+								<!-- SUBMIT BUTTON -->
+								<button id="portfolioDeleteBtn" type="submit" class="btn btn-success btn-lg btn-block">
+									<span class="glyphicon glyphicon-flash"></span> Submit!
+								</button>
+								
+								<!-- SHOW DATA FROM INPUTS AS THEY ARE BEING TYPED -->
+								<pre>{{ formData }}</pre>
+
+							</form>
+						</div>
+						<div class="col-md-6">
+							<!-- SHOW ERROR/SUCCESS MESSAGES -->
+							<div id="portDeleteMessages" class="well" ng-show="message"><h1>{{ pricemessage }}</h1></div>
+						</div>
+					</div>
+				</div> 
+			</div>
+		</div>
+	</div>
+	</div>
+	</div>
+	</div>
+	</body>
+</html>

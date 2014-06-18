@@ -1,0 +1,32 @@
+application: intcomplab8
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: yes
+
+handlers:
+  
+- url: /stock/.*
+  script: ajax.app  
+  
+- url: /portfolio/.*
+  script: ajax.app
+
+- url: (.*)/
+  static_files: ngIndex.html
+  upload: ngIndex.html
+  
+- url: /
+  static_dir: static
+
+- url: /favicon\.ico
+  static_files: favicon.ico
+  upload: favicon\.ico
+  
+- url: .*
+  static_files: ngIndex.html
+  upload: ngIndex.html
+
+libraries:
+- name: webapp2
+  version: "2.5.2"
